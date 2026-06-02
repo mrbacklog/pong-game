@@ -20,4 +20,8 @@ await build({
 const html = readFileSync("index.html", "utf8").replace("./src/main.ts", "./main.js");
 writeFileSync("dist/index.html", html);
 
-console.log("Built dist/ — main.js + index.html");
+// Custom domein voor GitHub Pages — het CNAME-bestand in de artifact zorgt dat
+// elke deploy het domein behoudt (anders wist een nieuwe Actions-deploy het).
+writeFileSync("dist/CNAME", "pong.mrbacklog.nl\n");
+
+console.log("Built dist/ — main.js + index.html + CNAME");
