@@ -48,9 +48,14 @@ export interface AiOutput {
  * the ball correctly (small jitter), otherwise it has a lapse and commits to a clearly
  * wrong intercept. The result is latched for the whole approach so the AI genuinely
  * misjudges where the ball lands instead of averaging its error away over time.
+ *
+ * `isServe` is true on the opening shot of a point (ball straight from center, slow,
+ * full reaction time) — the most readable ball in the game. The AI never lapses on a
+ * serve at any level; a concentration lapse belongs in the heat of a rally, not on a
+ * clean center serve. Difficulty therefore lives in the rallies, not in free serve aces.
  */
-function rollConcentration(tuning: AITuning, rng: Rng): number {
-  if (rng.next() < tuning.focus) {
+function rollConcentration(tuning: AITuning, rng: Rng, isServe: boolean): number {
+  if (isServe || rng.next() < tuning.focus) {
     return (rng.next() * 2 - 1) * tuning.focusError * PADDLE_H;
   }
   const sign = rng.next() < 0.5 ? -1 : 1;
@@ -80,7 +85,9 @@ export function aiPaddleDir(input: AiInput): AiOutput {
   } else {
     if (!committed) {
       // new approach: roll concentration ONCE and commit it, then react.
-      error = rollConcentration(tuning, input.rng);
+      // lastHitBy === 0 means no paddle has touched the ball yet → it's the serve.
+      const isServe = input.ball.lastHitBy === 0;
+      error = rollConcentration(tuning, input.rng, isServe);
       committed = true;
       cooldown = tuning.reactionMs / 1000;
     }

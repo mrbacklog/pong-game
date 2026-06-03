@@ -2,6 +2,23 @@
 
 Alle wijzigingen aan Pong. Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versies volgen [SemVer](https://semver.org/).
 
+## [0.3.1] — 2026-06-03 — AI leest de serve betrouwbaar
+
+### Changed
+
+- **Geen concentratie-verslapping op de opening-serve.** De serve (bal recht vanuit het
+  midden, traag, met volle reactietijd) is de meest leesbare bal van het spel; een lapse
+  hoorde daar niet. De AI leest nu op álle niveaus de serve betrouwbaar (`ball.lastHitBy === 0`
+  → geen lapse, alleen scherpe focus-jitter). De moeilijkheid leeft volledig in de rally's,
+  waar het concentratie-model ongewijzigd blijft. Gemeten serve-whiff: easy/normal/hard
+  **0%** (was 44%/23%/4,5%); rally-whiff onveranderd (easy ~47%, normal ~22%, hard ~4%).
+
+### Added
+
+- **Serve/rally-splitsing in de balans-regressietest** (`tests/sim/ai-balance.test.ts`) —
+  borgt apart dat élk niveau de center-serve betrouwbaar leest én dat easy in rally's
+  winbaar blijft met monotone moeilijkheid.
+
 ## [0.3.0] — 2026-06-03 — eerlijke AI (concentratie-model)
 
 ### Changed
