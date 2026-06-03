@@ -29,17 +29,47 @@ export const SIM_DT = 1 / 120; // fixed sim timestep, seconds
 export interface AITuning {
   /** fraction of PADDLE_SPEED. */
   maxSpeed: number;
+  /** initial reaction lag at the start of each approach, ms. */
   reactionMs: number;
-  /** +/- prediction offset in paddle-heights. */
-  predictionError: number;
   /** px dead zone around target before moving. */
   deadZone: number;
+  /**
+   * probability the AI reads the ball correctly this approach. With probability
+   * 1 - focus it has a concentration lapse and commits to a wrong intercept,
+   * holding that misjudgment until the ball resets (it does not silently correct).
+   */
+  focus: number;
+  /** when focused, small +/- target jitter in paddle-heights (still catchable). */
+  focusError: number;
+  /** on a lapse, committed +/- offset from the true intercept in paddle-heights. */
+  lapseError: number;
 }
 
 export const AI_TUNING: Record<Difficulty, AITuning> = {
-  easy: { maxSpeed: 0.55, reactionMs: 220, predictionError: 0.9, deadZone: 40 },
-  normal: { maxSpeed: 0.78, reactionMs: 120, predictionError: 0.4, deadZone: 22 },
-  hard: { maxSpeed: 0.95, reactionMs: 55, predictionError: 0.12, deadZone: 10 },
+  easy: {
+    maxSpeed: 0.62,
+    reactionMs: 240,
+    deadZone: 30,
+    focus: 0.45,
+    focusError: 0.25,
+    lapseError: 1.4,
+  },
+  normal: {
+    maxSpeed: 0.82,
+    reactionMs: 130,
+    deadZone: 18,
+    focus: 0.72,
+    focusError: 0.15,
+    lapseError: 1.0,
+  },
+  hard: {
+    maxSpeed: 0.97,
+    reactionMs: 60,
+    deadZone: 8,
+    focus: 0.94,
+    focusError: 0.06,
+    lapseError: 0.7,
+  },
 };
 
 export const PALETTE = {

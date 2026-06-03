@@ -1,8 +1,8 @@
+import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 // Build voor statische hosting (GitHub Pages e.d.).
 // Bundelt src/main.ts → dist/main.js en schrijft een dist/index.html die naar
 // het gebundelde bestand wijst (de browser kan TypeScript niet direct laden).
 import { build } from "esbuild";
-import { mkdirSync, readFileSync, writeFileSync } from "node:fs";
 
 mkdirSync("dist", { recursive: true });
 

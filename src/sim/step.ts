@@ -29,6 +29,8 @@ export function initGameState(settings: Settings, rng: Rng): GameState {
     settings,
     aiTargetY: FIELD_H / 2,
     aiCooldown: 0,
+    aiCommitted: false,
+    aiError: 0,
   };
 }
 
@@ -73,6 +75,8 @@ export function stepGame(
   let p2 = state.p2;
   let aiTargetY = state.aiTargetY;
   let aiCooldown = state.aiCooldown;
+  let aiCommitted = state.aiCommitted;
+  let aiError = state.aiError;
   if (state.settings.mode === "1p") {
     const ai = aiPaddleDir({
       ball: state.ball,
@@ -80,10 +84,14 @@ export function stepGame(
       difficulty: state.settings.difficulty,
       prevTargetY: state.aiTargetY,
       cooldown: state.aiCooldown,
+      committed: state.aiCommitted,
+      error: state.aiError,
       rng,
     });
     aiTargetY = ai.targetY;
     aiCooldown = Math.max(0, ai.cooldown - dt);
+    aiCommitted = ai.committed;
+    aiError = ai.error;
     const aiSpeed = PADDLE_SPEED * AI_TUNING[state.settings.difficulty].maxSpeed;
     p2 = stepPaddle({ ...state.p2, dir: ai.dir }, aiSpeed, dt);
   } else {
@@ -139,6 +147,8 @@ export function stepGame(
       serveToward,
       aiTargetY,
       aiCooldown,
+      aiCommitted,
+      aiError,
     },
     events,
   };

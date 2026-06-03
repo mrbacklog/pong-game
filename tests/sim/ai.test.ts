@@ -29,6 +29,8 @@ describe("aiPaddleDir", () => {
       difficulty: "hard",
       prevTargetY: 600,
       cooldown: 0,
+      committed: true,
+      error: 0,
       rng: mulberry32(1),
     });
     expect(dir).toBe(1);
@@ -41,6 +43,8 @@ describe("aiPaddleDir", () => {
       difficulty: "hard",
       prevTargetY: 360,
       cooldown: 0,
+      committed: true,
+      error: 0,
       rng: mulberry32(1),
     });
     expect(dir).toBe(0);
@@ -53,6 +57,8 @@ describe("aiPaddleDir", () => {
       difficulty: "normal",
       prevTargetY: 360,
       cooldown: 0,
+      committed: true,
+      error: 0,
       rng: mulberry32(1),
     });
     expect(dir).toBe(1);
@@ -65,6 +71,8 @@ describe("aiPaddleDir", () => {
       difficulty: "easy",
       prevTargetY: 650, // old target below paddle center → would move down
       cooldown: 0.2, // not yet ready to recompute
+      committed: true,
+      error: 0,
       rng: mulberry32(1),
     });
     expect(out.targetY).toBe(650); // kept old target

@@ -45,6 +45,10 @@ export interface GameState {
   /** carried AI state for reaction-time gating (1p only). */
   aiTargetY: number;
   aiCooldown: number;
+  /** whether the AI has committed its read for the current approach. */
+  aiCommitted: boolean;
+  /** the committed +/- intercept misjudgment (px) for the current approach. */
+  aiError: number;
 }
 
 /** per-tick directional inputs and edge-triggered menu actions. */

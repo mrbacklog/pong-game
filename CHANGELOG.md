@@ -2,6 +2,16 @@
 
 Alle wijzigingen aan Pong. Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versies volgen [SemVer](https://semver.org/).
 
+## [0.3.0] — 2026-06-03 — eerlijke AI (concentratie-model)
+
+### Changed
+
+- **AI-balans herzien** — de AI maakt nu *echte, vastgehouden* inschattingsfouten over waar de bal landt, in plaats van een perfecte voorspelling waarvan de willekeurige ruis elke reactie-tik opnieuw rolde en daardoor wegmiddelde. Per balnadering rolt de AI éénmaal of hij scherp is (`focus`) of een concentratie-verslapping heeft, en commit zich aan dat (mogelijk foute) onderscheppingspunt tot de bal reset. Gevolg: **easy is nu daadwerkelijk te verslaan** (~44% misjudgments), normal blijft uitdagend (~23%), hard blijft scherp (~4,5%). Voorheen miste zelfs easy de bal vrijwel nooit (~1%), waardoor geen mens een punt won.
+
+### Added
+
+- **Balans-regressietest** (`tests/sim/ai-balance.test.ts`) — deterministische headless self-play meet de AI-whiff-rate per niveau en borgt dat easy winbaar blijft, hard scherp blijft, en de moeilijkheid monotoon oploopt.
+
 ## [0.2.0] — 2026-06-02 — eerste speelbare release
 
 ### Added
