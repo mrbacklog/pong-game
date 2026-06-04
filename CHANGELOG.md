@@ -2,6 +2,25 @@
 
 Alle wijzigingen aan Pong. Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versies volgen [SemVer](https://semver.org/).
 
+## [0.4.2] — 2026-06-04 — mobiele polish (input-bewuste hints + knop-plaatsing)
+
+### Changed
+
+- **Input-bewuste hints.** De interface herkent nu de *laatst gebruikte* invoer (best practice:
+  Pointer Events `pointerType` + `keydown`, met een coarse-pointer begin-gok — zoals what-input/
+  react-aria). Op **touch** verdwijnen de verwarrende toetsenbord-teksten volledig (menu-legenda,
+  pauze- en game-over-hints); op toetsenbord/muis blijven ze. Werkt ook op hybride toestellen.
+- **Knop-plaatsing.** De pauze-knop staat niet langer boven-midden (pal over de stand) maar
+  **rechtsboven**; de fullscreen-knop linksboven — beide in de lege hoeken, vrij van de gecentreerde
+  score. De pauze/game-over-actiebalk (Hervat/Opnieuw/Menu) zit nu netjes onder de titel.
+
+### Engineering
+
+- Nieuwe pure-geteste module `io/input-mode.ts` (dynamische modaliteits-tracker, injecteerbaar
+  window). `drawMenu/drawPause/drawGameOver` krijgen de modus door en laten hints weg op touch.
+  7 nieuwe unit-tests; Playwright verifieerde dat de hint op touch verdwijnt (2710→0 pixels) en de
+  knoppen vrij van de score staan. Sim/scene ongewijzigd.
+
 ## [0.4.1] — 2026-06-04 — tap-to-fullscreen
 
 ### Added

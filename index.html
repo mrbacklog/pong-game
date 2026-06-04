@@ -67,10 +67,10 @@
         padding: 10px 16px;
         box-shadow: 0 0 18px #a855f733;
       }
+      /* top-right corner, clear of the centered score (drawn at top-centre of the field) */
       #btn-pause {
         top: max(12px, env(safe-area-inset-top));
-        left: 50%;
-        transform: translateX(-50%);
+        right: max(12px, env(safe-area-inset-right));
         display: none;
       }
       #shell.playing #btn-pause {
@@ -88,10 +88,11 @@
       #shell.fs-ok:not(.portrait) #btn-fs {
         display: block;
       }
+      /* sits just below the centered PAUSED / GAME OVER title rather than at the bottom */
       #actions {
         position: absolute;
         left: 50%;
-        bottom: 16%;
+        top: 62%;
         transform: translateX(-50%);
         display: none;
         gap: 14px;

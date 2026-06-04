@@ -1,6 +1,7 @@
 import { FIELD_H, FIELD_W, PADDLE_H } from "./config";
 import { createAudioManager } from "./io/audio";
 import { createInputManager } from "./io/input";
+import { createInputModeTracker } from "./io/input-mode";
 import { createLoop } from "./io/loop";
 import { createShell } from "./io/shell";
 import { type TouchFrame, createTouchManager } from "./io/touch";
@@ -55,6 +56,7 @@ function bootstrap(): void {
   window.addEventListener("resize", onResize);
   window.addEventListener("orientationchange", onResize);
   const touch = createTouchManager(shellEl);
+  const inputMode = createInputModeTracker();
 
   let machine: Machine = initMachine();
   let game: GameState = initGameState(machine.settings, rng);
@@ -123,12 +125,13 @@ function bootstrap(): void {
   function render(): void {
     shell.update(machine.scene, machine.settings.mode);
     draw(ctx as CanvasRenderingContext2D, game, effects);
+    const mode = inputMode.get();
     if (machine.scene === "menu") {
-      drawMenu(ctx as CanvasRenderingContext2D, machine);
+      drawMenu(ctx as CanvasRenderingContext2D, machine, mode);
     } else if (machine.scene === "paused") {
-      drawPause(ctx as CanvasRenderingContext2D);
+      drawPause(ctx as CanvasRenderingContext2D, mode);
     } else if (machine.scene === "gameover" && machine.winner !== 0) {
-      drawGameOver(ctx as CanvasRenderingContext2D, machine.winner);
+      drawGameOver(ctx as CanvasRenderingContext2D, machine.winner, mode);
     }
   }
 
