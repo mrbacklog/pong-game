@@ -2,6 +2,17 @@
 
 Alle wijzigingen aan Pong. Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versies volgen [SemVer](https://semver.org/).
 
+## [0.4.3] — 2026-06-04 — landscape-fixes (overlappende knoppen + klein menu)
+
+### Fixed
+
+- **Actiebalk-knoppen overlapten.** De pauze/game-over-knoppen (Hervat/Opnieuw/Menu) erfden
+  `position: absolute` van de algemene `.ui-btn`-stijl (bedoeld voor de hoek-knoppen), waardoor ze
+  in landscape op elkaar stapelden. Ze stromen nu weer naast elkaar in de flex-rij.
+- **Menu-keuzes te klein in mobiele landscape.** De menu-rijen zijn groter (46 px) en ruimer
+  (rij-afstand 64 → 76 px), wat tegelijk de tap-targets vergroot. De menu-hittest gebruikt dezelfde
+  gedeelde constanten, dus tik-zones blijven exact uitgelijnd.
+
 ## [0.4.2] — 2026-06-04 — mobiele polish (input-bewuste hints + knop-plaatsing)
 
 ### Changed

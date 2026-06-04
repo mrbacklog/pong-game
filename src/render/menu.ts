@@ -3,8 +3,8 @@ import type { InputMode } from "../io/input-mode";
 import type { Machine } from "../scene/machine";
 import { MENU_ROWS } from "../scene/machine";
 
-export const MENU_TOP_Y = 320;
-export const MENU_ROW_GAP = 64;
+export const MENU_TOP_Y = 300;
+export const MENU_ROW_GAP = 76;
 
 function overlay(ctx: CanvasRenderingContext2D, alpha: number): void {
   ctx.fillStyle = `rgba(10,10,20,${alpha})`;
@@ -36,7 +36,7 @@ export function drawMenu(
     `MUSIC     < ${s.musicOn ? "ON" : "OFF"} >`,
     "START",
   ];
-  ctx.font = "600 36px ui-monospace, 'Segoe UI', monospace";
+  ctx.font = "600 46px ui-monospace, 'Segoe UI', monospace";
   for (let i = 0; i < rows.length; i++) {
     const active = i === machine.menuCursor;
     ctx.fillStyle = active ? PALETTE.ball : PALETTE.accent;

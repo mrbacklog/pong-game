@@ -97,6 +97,11 @@
         display: none;
         gap: 14px;
       }
+      /* action-bar buttons flow in the flex row (override the absolute .ui-btn default,
+         which is only meant for the corner buttons #btn-pause / #btn-fs) */
+      #actions .ui-btn {
+        position: static;
+      }
       #shell.paused #actions,
       #shell.over #actions {
         display: flex;
