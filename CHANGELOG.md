@@ -2,6 +2,17 @@
 
 Alle wijzigingen aan Pong. Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versies volgen [SemVer](https://semver.org/).
 
+## [0.4.1] — 2026-06-04 — tap-to-fullscreen
+
+### Added
+
+- **Volledig-scherm-knop (⛶).** Een tikbare toggle linksboven schakelt fullscreen aan/uit; bij
+  het ingaan wordt best-effort de oriëntatie op landscape vergrendeld (Android). De knop wordt
+  alleen getoond waar de Fullscreen API beschikbaar is (`document.fullscreenEnabled`) — op iOS
+  Safari, waar het niet betrouwbaar werkt, verschijnt geen dode knop, en in portret is hij verborgen.
+  Het icoon wisselt ⛶ ↔ ⤢ op `fullscreenchange`, en de layout herberekent bij het veranderen van de
+  viewport. Puur een shell-uitbreiding; sim/scene/renderer ongewijzigd.
+
 ## [0.4.0] — 2026-06-03 — touch-besturing & mobiele weergave
 
 ### Added

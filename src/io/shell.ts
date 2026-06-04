@@ -56,25 +56,63 @@ export function createShell(): Shell {
     else if (act === "menu") back = true;
   };
 
+  function applyLayout(): void {
+    const layout = computeLayout(window.innerWidth, window.innerHeight);
+    shell.classList.toggle("portrait", layout.orientation === "portrait");
+    place(canvas, layout.field);
+
+    const inset = 6;
+    const railOf = (g: Rect): Rect => ({
+      left: g.left + inset,
+      top: g.top + g.height * 0.12,
+      width: Math.max(0, g.width - 2 * inset),
+      height: g.height * 0.76,
+    });
+    place(railL, railOf(layout.leftGutter));
+    place(railR, railOf(layout.rightGutter));
+  }
+
+  // Fullscreen toggle (best-effort): works on Android/desktop, unsupported on iOS Safari.
+  // The button is only shown where document.fullscreenEnabled is true, so there is never a
+  // dead control; on entering fullscreen we also try to lock landscape (Android only).
+  const btnFs = document.getElementById("btn-fs") as HTMLButtonElement;
+  const fsSupported = !!document.fullscreenEnabled;
+  shell.classList.toggle("fs-ok", fsSupported);
+
+  const syncFsIcon = (): void => {
+    btnFs.textContent = document.fullscreenElement ? "⤢" : "⛶";
+  };
+  const onFsChange = (): void => {
+    syncFsIcon();
+    applyLayout(); // entering/leaving fullscreen resizes the viewport
+  };
+  const toggleFullscreen = (): void => {
+    if (!document.fullscreenElement) {
+      document.documentElement.requestFullscreen().then(
+        () => {
+          const orient = screen.orientation as unknown as { lock?: (o: string) => Promise<void> };
+          orient.lock?.("landscape")?.catch(() => {});
+        },
+        () => {},
+      );
+    } else {
+      document.exitFullscreen().catch(() => {});
+    }
+  };
+  const onFsDown = (e: Event): void => {
+    e.preventDefault();
+    e.stopPropagation();
+    toggleFullscreen();
+  };
+
   btnPause.addEventListener("pointerdown", onPauseDown);
   actions.addEventListener("pointerdown", onActionDown);
+  if (fsSupported) btnFs.addEventListener("pointerdown", onFsDown);
+  document.addEventListener("fullscreenchange", onFsChange);
+  syncFsIcon();
 
   return {
-    applyLayout(): void {
-      const layout = computeLayout(window.innerWidth, window.innerHeight);
-      shell.classList.toggle("portrait", layout.orientation === "portrait");
-      place(canvas, layout.field);
-
-      const inset = 6;
-      const railOf = (g: Rect): Rect => ({
-        left: g.left + inset,
-        top: g.top + g.height * 0.12,
-        width: Math.max(0, g.width - 2 * inset),
-        height: g.height * 0.76,
-      });
-      place(railL, railOf(layout.leftGutter));
-      place(railR, railOf(layout.rightGutter));
-    },
+    applyLayout,
 
     update(scene: Scene, mode: Mode): void {
       shell.classList.remove("menu", "playing", "paused", "over");
@@ -93,6 +131,8 @@ export function createShell(): Shell {
     dispose(): void {
       btnPause.removeEventListener("pointerdown", onPauseDown);
       actions.removeEventListener("pointerdown", onActionDown);
+      btnFs.removeEventListener("pointerdown", onFsDown);
+      document.removeEventListener("fullscreenchange", onFsChange);
     },
   };
 }

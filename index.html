@@ -76,6 +76,18 @@
       #shell.playing #btn-pause {
         display: block;
       }
+      #btn-fs {
+        top: max(12px, env(safe-area-inset-top));
+        left: max(12px, env(safe-area-inset-left));
+        font-size: 20px;
+        padding: 8px 12px;
+        line-height: 1;
+        display: none;
+      }
+      /* only shown where the Fullscreen API is available (set via .fs-ok by shell.ts) */
+      #shell.fs-ok:not(.portrait) #btn-fs {
+        display: block;
+      }
       #actions {
         position: absolute;
         left: 50%;
@@ -129,6 +141,7 @@
       <div id="rail-left" class="rail"></div>
       <div id="rail-right" class="rail"></div>
       <button id="btn-pause" class="ui-btn" type="button">⏸ Pauze</button>
+      <button id="btn-fs" class="ui-btn" type="button" aria-label="Volledig scherm">⛶</button>
       <div id="actions">
         <button class="ui-btn" type="button" data-act="resume" data-only="paused">Hervat</button>
         <button class="ui-btn" type="button" data-act="restart" data-only="paused">Opnieuw</button>
