@@ -1,7 +1,9 @@
-import { FIELD_H, FIELD_W } from "./config";
+import { FIELD_H, FIELD_W, PADDLE_H } from "./config";
 import { createAudioManager } from "./io/audio";
 import { createInputManager } from "./io/input";
 import { createLoop } from "./io/loop";
+import { createShell } from "./io/shell";
+import { type TouchFrame, createTouchManager } from "./io/touch";
 import { initEffects, stepEffects } from "./render/effects";
 import { drawGameOver, drawMenu, drawPause } from "./render/menu";
 import { draw } from "./render/renderer";
@@ -10,7 +12,27 @@ import { initMachine, pauseHasPriority, reduceMachine } from "./scene/machine";
 import { mulberry32 } from "./sim/rng";
 import { isMatchOver, winnerOf } from "./sim/score";
 import { initGameState, stepGame } from "./sim/step";
-import type { GameState } from "./types";
+import type { GameState, InputState } from "./types";
+
+/** Merge keyboard + touch + on-screen-button inputs into one InputState for the tick.
+ *  Keyboard direction wins when held; edge actions OR together; menuSelect is touch-only. */
+function mergeInputs(
+  kb: InputState,
+  t: TouchFrame,
+  pend: { pause: boolean; confirm: boolean; back: boolean },
+): InputState {
+  return {
+    ...kb,
+    p1Dir: kb.p1Dir !== 0 ? kb.p1Dir : t.p1Dir,
+    p2Dir: kb.p2Dir !== 0 ? kb.p2Dir : t.p2Dir,
+    confirm: kb.confirm || t.confirm || pend.confirm,
+    pause: kb.pause || pend.pause,
+    back: kb.back || pend.back,
+    navLeft: kb.navLeft || t.navLeft,
+    navRight: kb.navRight || t.navRight,
+    menuSelect: t.menuSelect,
+  };
+}
 
 function bootstrap(): void {
   const canvas = document.getElementById("game") as HTMLCanvasElement | null;
@@ -24,6 +46,16 @@ function bootstrap(): void {
   const audio = createAudioManager();
   const rng = mulberry32(Date.now() >>> 0);
 
+  // mobile display shell (positions canvas + gutters) and touch input on the shell element.
+  const shellEl = document.getElementById("shell");
+  if (!shellEl) throw new Error("missing #shell");
+  const shell = createShell();
+  shell.applyLayout();
+  const onResize = (): void => shell.applyLayout();
+  window.addEventListener("resize", onResize);
+  window.addEventListener("orientationchange", onResize);
+  const touch = createTouchManager(shellEl);
+
   let machine: Machine = initMachine();
   let game: GameState = initGameState(machine.settings, rng);
   let effects = initEffects();
@@ -35,7 +67,16 @@ function bootstrap(): void {
   window.addEventListener("pointerdown", resumeAudio, { once: true });
 
   function simTick(dt: number): void {
-    const inputs = input.sample();
+    const inputs = mergeInputs(
+      input.sample(),
+      touch.sample(
+        machine.scene,
+        machine.settings.mode,
+        game.p1.y + PADDLE_H / 2,
+        game.p2.y + PADDLE_H / 2,
+      ),
+      shell.samplePending(),
+    );
 
     if (inputs.mute) audio.toggleMuted();
 
@@ -80,6 +121,7 @@ function bootstrap(): void {
   }
 
   function render(): void {
+    shell.update(machine.scene, machine.settings.mode);
     draw(ctx as CanvasRenderingContext2D, game, effects);
     if (machine.scene === "menu") {
       drawMenu(ctx as CanvasRenderingContext2D, machine);

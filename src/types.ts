@@ -64,6 +64,8 @@ export interface InputState {
   navDown: boolean;
   navLeft: boolean;
   navRight: boolean;
+  /** touch: directe rij-selectie in het menu, of null. */
+  menuSelect?: number | null;
 }
 
 /** events the pure sim emits for the IO shell (audio/juice) to react to. */

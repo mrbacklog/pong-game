@@ -2,6 +2,30 @@
 
 Alle wijzigingen aan Pong. Format: [keepachangelog.com](https://keepachangelog.com/en/1.1.0/). Versies volgen [SemVer](https://semver.org/).
 
+## [0.4.0] — 2026-06-03 — touch-besturing & mobiele weergave
+
+### Added
+
+- **Touch-besturing (landscape mobiel).** De paddles zijn nu met de duim te bedienen: je vinger
+  in de **zij-gutter achter de paddle** (links voor P1, rechts voor P2) en de paddle jaagt naar je
+  vinger ("vinger volgen"). 1P bestuurt links; 2P-lokaal speelt met twee duimen op één toestel.
+  Touch is een tweede `InputState`-bron naast het toetsenbord — de pure sim, scene-machine en
+  veld-renderer bleven ongewijzigd.
+- **Aantikbaar menu + touch-UI.** Tik een menu-rij (links/rechts) om de waarde te wisselen, tik
+  START om te beginnen; een pauze-knop tijdens spel en Hervat/Opnieuw/Menu-knoppen bij pauze en
+  game-over. Volledig speelbaar zonder toetsenbord.
+- **Mobiele weergave.** Het 16:9-veld wordt op hoogte gepast en is **altijd 100% zichtbaar**, met
+  gegarandeerde zij-gutters (duim-ruimte achter de paddles); `viewport-fit=cover` + safe-area,
+  `touch-action: none`. In portret verschijnt een **"draai je toestel"-overlay**.
+
+### Engineering
+
+- Nieuwe, grotendeels pure modules: `io/viewport.ts` (height-fit layout + client↔veld-mapping),
+  `render/menu-hit.ts` (menu-hittest), `io/touch.ts` (pointers → `InputState`, met `dirToTarget`),
+  `io/shell.ts` (DOM-layout via dezelfde `computeLayout` als single source of truth). `InputState`
+  kreeg een optionele `menuSelect` (directe rij-selectie). 53 nieuwe unit-tests; Playwright
+  touch-emulatie verifieerde layout, menu, scene-knoppen, gutter→paddle en de portret-overlay.
+
 ## [0.3.1] — 2026-06-03 — AI leest de serve betrouwbaar
 
 ### Changed

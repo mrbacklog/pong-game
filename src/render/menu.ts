@@ -2,6 +2,9 @@ import { FIELD_H, FIELD_W, PALETTE } from "../config";
 import type { Machine } from "../scene/machine";
 import { MENU_ROWS } from "../scene/machine";
 
+export const MENU_TOP_Y = 320;
+export const MENU_ROW_GAP = 64;
+
 function overlay(ctx: CanvasRenderingContext2D, alpha: number): void {
   ctx.fillStyle = `rgba(10,10,20,${alpha})`;
   ctx.fillRect(0, 0, FIELD_W, FIELD_H);
@@ -34,7 +37,7 @@ export function drawMenu(ctx: CanvasRenderingContext2D, machine: Machine): void 
     ctx.fillStyle = active ? PALETTE.ball : PALETTE.accent;
     ctx.shadowColor = active ? PALETTE.ball : "transparent";
     ctx.shadowBlur = active ? 16 : 0;
-    ctx.fillText(rows[i] ?? "", FIELD_W / 2, 320 + i * 64);
+    ctx.fillText(rows[i] ?? "", FIELD_W / 2, MENU_TOP_Y + i * MENU_ROW_GAP);
   }
   ctx.shadowBlur = 0;
   ctx.fillStyle = PALETTE.p2;

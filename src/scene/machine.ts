@@ -1,4 +1,5 @@
 import { DEFAULT_MATCH_LENGTH, MATCH_LENGTH_OPTIONS } from "../config";
+import { clampScalar } from "../sim/vec";
 import type { Difficulty, InputState, Mode, Scene, Settings } from "../types";
 
 /** menu rows the cursor can sit on. */
@@ -37,8 +38,12 @@ function cycleMatchLength(current: number, delta: number): number {
 
 function editMenu(machine: Machine, input: InputState): Machine {
   let menuCursor = machine.menuCursor;
-  if (input.navUp) menuCursor = (menuCursor - 1 + MENU_ROWS.length) % MENU_ROWS.length;
-  if (input.navDown) menuCursor = (menuCursor + 1) % MENU_ROWS.length;
+  if (input.menuSelect != null) {
+    menuCursor = clampScalar(input.menuSelect, 0, MENU_ROWS.length - 1);
+  } else {
+    if (input.navUp) menuCursor = (menuCursor - 1 + MENU_ROWS.length) % MENU_ROWS.length;
+    if (input.navDown) menuCursor = (menuCursor + 1) % MENU_ROWS.length;
+  }
 
   const settings: Settings = { ...machine.settings };
   const row = MENU_ROWS[menuCursor];

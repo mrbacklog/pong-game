@@ -2,7 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover"
+    />
     <title>Pong — Neon Retro</title>
     <style>
       html,
@@ -10,22 +13,133 @@
         margin: 0;
         height: 100%;
         background: #06060c;
-        display: flex;
-        align-items: center;
-        justify-content: center;
         overflow: hidden;
       }
+      /* Full-viewport touch/UI shell. The game canvas + gutters are positioned by JS
+         (src/io/shell.ts) using the same computeLayout the touch layer maps against. */
+      #shell {
+        position: fixed;
+        inset: 0;
+        touch-action: none;
+        overscroll-behavior: none;
+        user-select: none;
+        -webkit-user-select: none;
+        -webkit-tap-highlight-color: transparent;
+      }
       #game {
-        width: min(100vw, calc(100vh * 16 / 9));
-        height: auto;
-        aspect-ratio: 16 / 9;
+        position: absolute;
+        background: #0a0a14;
         box-shadow: 0 0 60px #a855f733;
         border-radius: 8px;
+      }
+      /* Thumb rails live in the gutters, behind the paddles. Hint only — not interactive. */
+      .rail {
+        position: absolute;
+        display: none;
+        pointer-events: none;
+        border-radius: 12px;
+        background: linear-gradient(180deg, #a855f70a, #a855f720, #a855f70a);
+      }
+      .rail::after {
+        content: "";
+        position: absolute;
+        left: 50%;
+        top: 10px;
+        bottom: 10px;
+        width: 3px;
+        transform: translateX(-50%);
+        border-radius: 2px;
+        background: repeating-linear-gradient(180deg, #ffffff26 0 10px, transparent 10px 24px);
+      }
+      #shell.playing #rail-left {
+        display: block;
+      }
+      #shell.playing.dual #rail-right {
+        display: block;
+      }
+      .ui-btn {
+        position: absolute;
+        font: 600 18px ui-monospace, "Segoe UI", monospace;
+        color: #e2e8f0;
+        background: #0a0a14cc;
+        border: 1px solid #a855f766;
+        border-radius: 12px;
+        padding: 10px 16px;
+        box-shadow: 0 0 18px #a855f733;
+      }
+      #btn-pause {
+        top: max(12px, env(safe-area-inset-top));
+        left: 50%;
+        transform: translateX(-50%);
+        display: none;
+      }
+      #shell.playing #btn-pause {
+        display: block;
+      }
+      #actions {
+        position: absolute;
+        left: 50%;
+        bottom: 16%;
+        transform: translateX(-50%);
+        display: none;
+        gap: 14px;
+      }
+      #shell.paused #actions,
+      #shell.over #actions {
+        display: flex;
+      }
+      #actions [data-only] {
+        display: none;
+      }
+      #shell.paused #actions [data-only~="paused"],
+      #shell.over #actions [data-only~="over"] {
+        display: inline-block;
+      }
+      #portrait {
+        position: fixed;
+        inset: 0;
+        display: none;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+        gap: 14px;
+        text-align: center;
+        background: #06060c;
+        color: #e2e8f0;
+        font: 600 22px ui-monospace, "Segoe UI", monospace;
+      }
+      #portrait .glyph {
+        font-size: 56px;
+        color: #a855f7;
+      }
+      #shell.portrait #portrait {
+        display: flex;
+      }
+      #shell.portrait #game,
+      #shell.portrait .rail,
+      #shell.portrait #btn-pause,
+      #shell.portrait #actions {
+        display: none !important;
       }
     </style>
   </head>
   <body>
-    <canvas id="game"></canvas>
+    <div id="shell">
+      <canvas id="game"></canvas>
+      <div id="rail-left" class="rail"></div>
+      <div id="rail-right" class="rail"></div>
+      <button id="btn-pause" class="ui-btn" type="button">⏸ Pauze</button>
+      <div id="actions">
+        <button class="ui-btn" type="button" data-act="resume" data-only="paused">Hervat</button>
+        <button class="ui-btn" type="button" data-act="restart" data-only="paused">Opnieuw</button>
+        <button class="ui-btn" type="button" data-act="rematch" data-only="over">Opnieuw</button>
+        <button class="ui-btn" type="button" data-act="menu" data-only="paused over">Menu</button>
+      </div>
+      <div id="portrait">
+        <div class="glyph">↻</div>
+        <div>Draai je toestel naar liggend</div>
+      </div>
+    </div>
     <script type="module" src="./src/main.ts"></script>
   </body>
 </html>
